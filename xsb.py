@@ -32,12 +32,12 @@ except ImportError:
 def getJsonText(url):
     time.sleep(random.randint(1, 13)*0.1)
     request = Request(url)
-	try:
-		text = urlopen(request, timeout=100).read()
-		return text
-	except e:
-		print e.reason
-		
+    try:
+        text = urlopen(request, timeout=100).read()
+        return text
+    except :
+        print "url Exception"
+        
     
 #返回结果   
 """
@@ -56,7 +56,7 @@ def getCompanyName(code):
     url = "http://www.neeq.com.cn//nqhqController/detailCompany.do?zqdm=%s" % (code)
     txt = getJsonText(url)
     if txt:
-		return txt[5:-1]
+        return txt[5:-1]
     return txt
 
 '''
@@ -70,24 +70,24 @@ def getCompanyName(code):
 '''
     
 def GetCode():  
-    for i in range(2):  
+    
+    for i in range(10):  
         inListHistUrl="http://www.neeq.com.cn/nqhqController/nqhq.do?&page=%d&type=G&zqdm=&sortfield=&sorttype=&xxfcbj=&keyword=&_=1484060057056" %(i)
         print inListHistUrl
-
         inListHistData=getJsonText(inListHistUrl)
         print type(inListHistData)
         finalStr = inListHistData[5:-1]
         #print finalStr[0], finalStr[-1]
         jsonText = json.loads(finalStr)
         #print  jsonText
-        f = open('xsbcompy.dat', 'w+')
+        f = open('xsbcompy.dat', 'a')
         for item  in jsonText[0]['content']:
             print item['hqzqdm'], item['hqzqjc']
-            nameTxt = getCompanyName(item['hqzqdm'])			
+            nameTxt = getCompanyName(item['hqzqdm'])            
             if nameTxt:
                 js = json.loads(nameTxt)
                 wStr = "\n" + item['hqzqdm'] + "," + js['baseinfo']['name'] + "," + js['baseinfo']['address'] +"," + js['baseinfo']['postcode'] +"," + js['baseinfo']['area'] 
-                wStr += ","+ js['baseinfo']['listingDate'] +","+ js['baseinfo']['industry'] +","+ js['baseinfo']['phone'] 
+                wStr += ","+ js['baseinfo']['listingDate'] +","+ js['baseinfo']['industry'] +","+ js['baseinfo']['phone'] + ","+ js['baseinfo']['stamp']
                 f.write(wStr)
         f.close()
         
